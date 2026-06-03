@@ -22,7 +22,11 @@ def create_app():
     register_logger(app)
 
     # Register blueprints
+    from routes.userroutes import user_bp
+    from routes.documentosrotas import documentos_bp
+    
     app.register_blueprint(user_bp, url_prefix='/users')
+    app.register_blueprint(documentos_bp, url_prefix='/documentos')
 
     with app.app_context():
         db.create_all()
