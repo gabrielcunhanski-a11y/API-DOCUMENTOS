@@ -10,6 +10,7 @@ def create_app():
     basedir = os.path.abspath(os.path.dirname(__file__))
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'geosite.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sua_chave_secreta_super_segura')
 
     # Initialize extensions
     db.init_app(app)
