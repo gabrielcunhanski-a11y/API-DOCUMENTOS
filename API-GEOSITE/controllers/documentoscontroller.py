@@ -7,8 +7,8 @@ class DocumentoController:
         user_id = getattr(request, 'user_id', None)
         data = request.get_json()
         
-        if not data or not data.get('titulo') or not data.get('url') or not data.get('tipo'):
-            return jsonify({"error": "Bad Request", "message": "Missing required fields (titulo, url, tipo)"}), 400
+        if not data or not data.get('titulo') or not data.get('url') or not data.get('tipo') or not data.get('city_id'):
+            return jsonify({"error": "Bad Request", "message": "Missing required fields (titulo, url, tipo, city_id)"}), 400
             
         try:
             doc = DocumentoService.create_document(
@@ -16,6 +16,7 @@ class DocumentoController:
                 url=data['url'],
                 tipo=data['tipo'],
                 user_id=user_id,
+                city_id=data['city_id'],
                 descricao=data.get('descricao')
             )
             return jsonify({
@@ -26,8 +27,31 @@ class DocumentoController:
             return jsonify({"error": "Internal Error", "message": str(e)}), 500
 
     @staticmethod
+    def update(doc_id):
+        user_id = getattr(request, 'user_id', None)
+        data = request.get_json()
+        
+        try:
+            doc, message = DocumentoService.update_document(doc_id, user_id, data)
+            if not doc:
+                if "not found" in message.lower():
+                    return jsonify({"error": "Not Found", "message": message}), 404
+                return jsonify({"error": "Unauthorized", "message": message}), 403
+                
+            return jsonify({
+                "message": message,
+                "document": doc.to_dict()
+            }), 200
+        except Exception as e:
+            return jsonify({"error": "Internal Error", "message": str(e)}), 500
+
+    @staticmethod
     def get_all():
-        docs = DocumentoService.get_all_documents()
+        titulo = request.args.get('titulo')
+        tipo = request.args.get('tipo')
+        city_id = request.args.get('city_id')
+        
+        docs = DocumentoService.get_all_documents(titulo=titulo, tipo=tipo, city_id=city_id)
         return jsonify([doc.to_dict() for doc in docs]), 200
 
     @staticmethod

@@ -9,4 +9,5 @@ documentos_bp.route('/', methods=['POST'])(auth_required(DocumentoController.cre
 documentos_bp.route('/', methods=['GET'])(auth_required(DocumentoController.get_all))
 documentos_bp.route('/me', methods=['GET'])(auth_required(DocumentoController.get_my_documents))
 documentos_bp.route('/<int:doc_id>', methods=['GET'])(auth_required(DocumentoController.get_by_id))
+documentos_bp.route('/<int:doc_id>', methods=['PUT'])(auth_required(DocumentoController.update))
 documentos_bp.route('/<int:doc_id>', methods=['DELETE'])(auth_required(DocumentoController.delete))
