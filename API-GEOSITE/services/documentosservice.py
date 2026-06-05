@@ -1,12 +1,28 @@
+import os
+from werkzeug.utils import secure_filename
+from flask import current_app
 from models.documentomodel import Documento
 from config.database import db
 
 class DocumentoService:
     @staticmethod
-    def create_document(titulo, url, tipo, user_id, city_id, descricao=None):
+    def save_file(file):
+        if not file:
+            return None
+        
+        filename = secure_filename(file.filename)
+        # Ensure the filename is unique to avoid overwriting
+        # You might want to add a timestamp or UUID here
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        return filename
+
+    @staticmethod
+    def create_document(titulo, file_path, tipo, user_id, city_id, url=None, descricao=None):
         new_doc = Documento(
             titulo=titulo,
             url=url,
+            file_path=file_path,
             tipo=tipo,
             user_id=user_id,
             city_id=city_id,

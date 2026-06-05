@@ -5,19 +5,37 @@ class DocumentoController:
     @staticmethod
     def create():
         user_id = getattr(request, 'user_id', None)
-        data = request.get_json()
         
-        if not data or not data.get('titulo') or not data.get('url') or not data.get('tipo') or not data.get('city_id'):
-            return jsonify({"error": "Bad Request", "message": "Missing required fields (titulo, url, tipo, city_id)"}), 400
+        # Obter dados do formulário (Multipart Form)
+        titulo = request.form.get('titulo')
+        tipo = request.form.get('tipo')
+        city_id = request.form.get('city_id')
+        descricao = request.form.get('descricao')
+        url = request.form.get('url') # Opcional
+        
+        if not titulo or not tipo or not city_id:
+            return jsonify({"error": "Bad Request", "message": "Missing required fields (titulo, tipo, city_id)"}), 400
+            
+        if 'file' not in request.files:
+            return jsonify({"error": "Bad Request", "message": "No file part"}), 400
+            
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "Bad Request", "message": "No selected file"}), 400
             
         try:
+            # Salvar o arquivo físico
+            filename = DocumentoService.save_file(file)
+            
+            # Criar o registro no banco
             doc = DocumentoService.create_document(
-                titulo=data['titulo'],
-                url=data['url'],
-                tipo=data['tipo'],
+                titulo=titulo,
+                file_path=filename,
+                tipo=tipo,
                 user_id=user_id,
-                city_id=data['city_id'],
-                descricao=data.get('descricao')
+                city_id=city_id,
+                url=url,
+                descricao=descricao
             )
             return jsonify({
                 "message": "Document created successfully",
