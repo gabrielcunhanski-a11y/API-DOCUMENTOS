@@ -1,4 +1,4 @@
-from models.user import User
+from models.usermodel import User
 from config.database import db
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
@@ -28,7 +28,7 @@ class UserService:
         payload = {
             'user_id': user.id,
             'role': user.role,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=24)
         }
         return jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
 

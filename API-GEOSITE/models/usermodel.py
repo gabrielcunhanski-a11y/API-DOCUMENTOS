@@ -1,5 +1,5 @@
 from config.database import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -9,10 +9,11 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     course = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(20), nullable=False, default='aluno') # 'aluno' ou 'professor'
+    role = db.Column(db.String(20), nullable=False, default='aluno') # 'aluno', 'professor' ou 'admin'
     is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<User {self.username}>'

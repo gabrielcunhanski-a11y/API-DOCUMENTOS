@@ -3,17 +3,17 @@ from flask import Flask
 from config.database import db
 from routes.userroutes import user_bp
 from routes.citiesroutes import cities_bp
-from routes.documentosrotas import documentos_bp
-from routes.admroutes import admin_blueprint
-from models.user import User
-from models.citiesmodel import City
-from models.documentosmodels import Documento
+from routes.documentosroutes import documentos_bp
+from routes.admroutes import admin_bp
+from routes.authroutes import auth_bp
+from models.usermodel import User
+from models.citymodel import City
+from models.documentomodel import Documento
 
 def create_app():
     app = Flask(__name__)
     
-    # Configurações via variáveis de ambiente para o PostgreSQL da faculdade
-    # Exemplo de URI: postgresql://usuario:senha@host:port/database
+    # Configurações via variáveis de ambiente para o PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
         'DATABASE_URL', 
         'postgresql://postgres:postgres@localhost:5432/geocidades'
@@ -34,9 +34,8 @@ def create_app():
     app.register_blueprint(user_bp, url_prefix='/users')
     app.register_blueprint(documentos_bp, url_prefix='/documentos')
     app.register_blueprint(cities_bp, url_prefix='/cities')
-    app.register_blueprint(admin_blueprint, url_prefix='/api')
-
-    # Nota: db.create_all() desativado conforme solicitado para não alterar o PostgreSQL remoto.
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(auth_bp, url_prefix='/auth')
 
     return app
 

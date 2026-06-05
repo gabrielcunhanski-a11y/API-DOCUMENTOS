@@ -1,5 +1,5 @@
 from config.database import db
-from models.citiesmodel import City
+from models.citymodel import City
 import re
 
 class CityService:

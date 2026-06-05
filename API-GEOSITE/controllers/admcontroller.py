@@ -1,5 +1,5 @@
 from flask import jsonify
-from services.admservices import AdminService
+from services.admservice import AdminService
 
 
 class AdminController:

@@ -1,5 +1,5 @@
 from config.database import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Documento(db.Model):
     __tablename__ = 'documentos'
@@ -9,19 +9,14 @@ class Documento(db.Model):
     descricao = db.Column(db.Text, nullable=True)
     url = db.Column(db.String(255), nullable=False)
     tipo = db.Column(db.String(50), nullable=False)
+    
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-   
-    autor = db.relationship('User', backref=db.backref('documentos', lazy=True))
-
-
-
-
     city_id = db.Column(db.Integer, db.ForeignKey('cities.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-
+    # Relacionamentos
+    autor = db.relationship('User', backref=db.backref('documentos', lazy=True))
 
     def to_dict(self):
         return {

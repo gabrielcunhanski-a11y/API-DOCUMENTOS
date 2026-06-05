@@ -1,4 +1,4 @@
-from models.documentosmodels import Documento
+from models.documentomodel import Documento
 from config.database import db
 
 class DocumentoService:
